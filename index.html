@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>电子签名实现demo</title>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/jquery.media.js"></script>
+    <style>
+        .title {
+            text-align: center;
+        }
+
+        #toWritePage {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 5px 15px;
+            background: #5eb95e;
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<h3 class="title">合同预览</h3>
+<div class="panel-body">
+    <a class="pdfMedia" href="./file/main.pdf"></a>
+</div>
+
+<div style="text-align: center">
+    <a id="toWritePage" href="./write.html">我要签署</a>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('a.pdfMedia').media({width: '100%', height: '600px'});
+    })
+</script>
+
+
+</body>
+</html>

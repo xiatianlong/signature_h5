@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>电子签名实现demo</title>
+    <script src="./js/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="./js/flashcanvas.js"></script>
+    <![endif]-->
+    <script src="./js/jSignature.min.js"></script>
+    <style>
+        .jSignature {
+            border: 1px solid !important;
+        }
+    </style>
+</head>
+<body>
+
+
+<div id="signature"></div>
+
+<div><img src="" id="resultImg"></div>
+<button id="writeReset">重新签署</button>
+<button id="writeDone">签署完成</button>
+
+<script>
+    $(document).ready(function () {
+        $("#signature").jSignature("init", {"height": '200px', "width": "1000px", "decor-color": "transparent"});
+
+
+        $("#writeReset").on('click', function () {
+            $("#signature").jSignature("reset");
+
+        })
+
+        $("#writeDone").on('click', function () {
+            let result = $("#signature").jSignature("getData", "image");
+            console.log(result);
+            $("#resultImg").attr("src", "data:" + result.join(","))
+        })
+    })
+</script>
+
+
+</body>
+</html>
