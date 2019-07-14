@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>电子签名实现demo</title>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/jquery.media.js"></script>
+    <style>
+        .title {
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+
+<h3 class="title">签订结果预览</h3>
+<div class="panel-body">
+    <a class="pdfMedia" href=""></a>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        let resultUrl = sessionStorage.getItem("result");
+        console.log(resultUrl);
+        $(".pdfMedia").attr('href', resultUrl);
+        $('a.pdfMedia').media({width: '100%', height: '700px'});
+        sessionStorage.clear();
+    })
+</script>
+
+
+</body>
+</html>

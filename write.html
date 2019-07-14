@@ -25,7 +25,7 @@
 
 <script>
     $(document).ready(function () {
-        $("#signature").jSignature("init", {"height": '200px', "width": "1000px", "decor-color": "transparent"});
+        $("#signature").jSignature("init", {"height": '180px', "width": "320px", "decor-color": "transparent"});
 
 
         $("#writeReset").on('click', function () {
@@ -36,9 +36,22 @@
         $("#writeDone").on('click', function () {
             let result = $("#signature").jSignature("getData", "image");
             console.log(result);
-            $("#resultImg").attr("src", "data:" + result.join(","))
+            let writeName = "data:" + result.join(",");
+            $("#resultImg").attr("src", writeName)
+            submit(writeName);
         })
+
+
+        function submit(file) {
+            $.post("http://localhost:8080/writeName/submit", {file: file}, function (res) {
+                sessionStorage.setItem("result", res.fileUrl);
+                window.location.href = "./result.html";
+            })
+        }
     })
+
+
+
 </script>
 
 
