@@ -35,7 +35,8 @@
 <script>
 
     $(function () {
-        var url = sessionStorage.getItem("result");
+        // var url = sessionStorage.getItem("result");
+        var url = "http://www.zuixingxi.com/" + sessionStorage.getItem("result")
         pdfjsLib.disableWorker = true;
         pdfjsLib.getDocument(url).then(function (pdf) {
 
