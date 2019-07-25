@@ -2,12 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>电子签名实现demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>电子合同签名</title>
     <script src="./js/jquery.min.js"></script>
-    <script src="./js/jquery.media.js"></script>
+    <script src="./js/pdf/pdf.js"></script>
     <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
         .title {
             text-align: center;
+            margin: 15px 0;
+        }
+        .panel-body{
+            width: 100%;
+            height: auto;
+            overflow: scroll;
         }
 
     </style>
@@ -16,18 +28,48 @@
 
 <h3 class="title">签订结果预览</h3>
 <div class="panel-body">
-    <a class="pdfMedia" href=""></a>
+    <div id="canvas" style="margin:0 auto"></div>
 </div>
 
 
 <script>
-    $(document).ready(function () {
 
-        let resultUrl = sessionStorage.getItem("result");
-        console.log(resultUrl);
-        $(".pdfMedia").attr('href', resultUrl);
-        $('a.pdfMedia').media({width: '100%', height: '700px'});
-        sessionStorage.clear();
+    $(function () {
+        var url = sessionStorage.getItem("result");
+        pdfjsLib.disableWorker = true;
+        pdfjsLib.getDocument(url).then(function (pdf) {
+
+            var numPages = pdf.numPages;
+            var start = 1;
+            renderPageAsync(pdf, numPages, start);
+        });
+
+        async function renderPageAsync(pdf, numPages, current){
+            let canvasContent = document.getElementById("canvas");
+            for(let i=1; i<=numPages; i++){
+                // 解析page
+                let page = await pdf.getPage(i);
+                // 渲染
+                let scale = 1;
+                let viewport = page.getViewport(scale);
+                // Prepare canvas using PDF page dimensions.
+                let canvas = document.createElement("canvas");
+                let context = canvas.getContext('2d');
+                canvasContent.appendChild(canvas);
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Render PDF page into canvas context.
+                let renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+
+            }
+        }
+
     })
 </script>
 

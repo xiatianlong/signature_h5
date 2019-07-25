@@ -1,51 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>电子签名实现demo</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>电子合同签名</title>
     <script src="./js/jquery.min.js"></script>
     <!--[if lt IE 9]>
     <script type="text/javascript" src="./js/flashcanvas.js"></script>
     <![endif]-->
     <script src="./js/jSignature.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        h3{
+            text-align: center;
+        }
+        body{
+            padding: 10px;
+        }
         .jSignature {
             border: 1px solid !important;
+        }
+        #resultImg{
+            height: 60px;
+            width: auto;
         }
     </style>
 </head>
 <body>
+<h3>签名</h3>
+<div class="form-group">
+    <label for="mobile">手机号</label>
+    <input type="email" class="form-control" id="mobile" placeholder="请输入11位数的手机号">
+</div>
+<div class="form-group">
+    <label for="idNo">身份证号</label>
+    <input type="password" class="form-control" id="idNo" placeholder="请输入18位的身份证号">
+</div>
+<div class="form-group">
+    <label for="idNo">签名</label>
+    <div id="signature"></div>
+    <a type="button" id="writeReset" class="btn btn-default btn-xs">清除</a>
+</div>
 
-
-<div id="signature"></div>
 
 <div><img src="" id="resultImg"></div>
-<button id="writeReset">重新签署</button>
-<button id="writeDone">签署完成</button>
+<div style="text-align: center;margin-top: 30px;">
+    <a type="button" id="writeDone" class="btn btn-primary">签署完成，提交</a>
+</div>
+
 
 <script>
     $(document).ready(function () {
         $("#signature").jSignature("init", {"height": '180px', "width": "320px", "decor-color": "transparent"});
 
-
+        $("#signature").bind('change', function(e){
+            let result = $("#signature").jSignature("getData", "image");
+            let writeName = "data:" + result.join(",");
+            $("#resultImg").attr("src", writeName)
+        })
         $("#writeReset").on('click', function () {
             $("#signature").jSignature("reset");
 
         })
 
         $("#writeDone").on('click', function () {
-            let result = $("#signature").jSignature("getData", "image");
-            console.log(result);
-            let writeName = "data:" + result.join(",");
-            $("#resultImg").attr("src", writeName)
             submit(writeName);
         })
 
 
         function submit(file) {
-            $.post("http://localhost:8080/writeName/submit", {file: file}, function (res) {
-                sessionStorage.setItem("result", res.fileUrl);
-                window.location.href = "./result.html";
+            let mobile = $("#mobile").val();
+            let idNo = $("#idNo").val();
+            let req = {
+                mobile: mobile,
+                idNo: idNo,
+                pdf:file
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8080/writeName/submit",
+                data: req,
+                success: function(res){
+                    console.log(res);
+                    if (res.result == 'success'){
+                        sessionStorage.setItem("result", res.data.fileUrl);
+                        window.location.href = "./result.html";
+                    }else{
+                        alert(res.message);
+                    }
+
+                }
             })
         }
     })
